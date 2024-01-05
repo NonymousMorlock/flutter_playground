@@ -39,6 +39,11 @@ dependencies:
   syncfusion_flutter_signaturepad: ^24.1.43
   provider: ^6.1.1
   path_provider: ^2.1.1
+  window_manager: ^0.3.7
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
 
 dev_dependencies:
   flutter_test:
