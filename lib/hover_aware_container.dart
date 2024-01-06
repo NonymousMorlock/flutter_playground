@@ -45,6 +45,13 @@ class _HoverAwareContainerState extends State<HoverAwareContainer>
   }
 
   @override
+  void dispose() {
+    animationController.dispose();
+    containerWidthNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MouseRegion(
       onHover: (_) {
