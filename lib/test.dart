@@ -1,5 +1,6 @@
 import 'package:discord_test/hover_aware_container.dart';
 import 'package:discord_test/hover_aware_socials.dart';
+import 'package:discord_test/hover_aware_socials_2.dart';
 import 'package:flutter/material.dart';
 
 class Test extends StatelessWidget {
@@ -63,7 +64,7 @@ class Test extends StatelessWidget {
                   const Center(child: HoverAwareSocials()),
                   const SizedBox(height: 30),
                   const Center(child: Text('USING EXPLICIT ANIMATION')),
-                  const Center(child: HoverAwareSocials()),
+                  const Center(child: HoverAwareSocials2()),
                 ],
               ),
             ),
