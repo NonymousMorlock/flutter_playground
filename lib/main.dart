@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:discord_test/round_field.dart';
 import 'package:discord_test/test.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:window_size/window_size.dart';
+
+import 'custom_paint.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +45,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Test(),
+      home: Scaffold(
+        // backgroundColor: Colors.black,
+        body: Center(
+          child: CustomPaint(
+            size: Size(160, (160 * 0.2857142857142857).toDouble()),
+            //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+            painter: RPSCustomPainter2(),
+          ),
+        ),
+      ),
     );
   }
 }
