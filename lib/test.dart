@@ -130,9 +130,10 @@ class _TodoScreenState extends State<TodoScreen> {
 Future _showBottomSheet(context) {
   return showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     builder: (context) => Container(
       height: 250,
-      margin: EdgeInsets.only(bottom: MediaQuery.viewPaddingOf(context).bottom),
+      // margin: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       padding: const EdgeInsets.all(18.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
