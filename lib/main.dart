@@ -45,16 +45,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Scaffold(
-        // backgroundColor: Colors.black,
-        body: Center(
-          child: CustomPaint(
-            size: Size(160, (160 * 0.2857142857142857).toDouble()),
-            //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-            painter: RPSCustomPainter2(),
-          ),
-        ),
-      ),
+      home: TodoScreen(),
     );
   }
 }
