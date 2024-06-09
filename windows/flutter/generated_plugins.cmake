@@ -3,16 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  cloud_firestore
-  file_selector_windows
-  firebase_auth
-  firebase_core
-  firebase_storage
-  objectbox_flutter_libs
-  permission_handler_windows
-  sentry_flutter
-  share_plus
-  url_launcher_windows
+  audioplayers_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
