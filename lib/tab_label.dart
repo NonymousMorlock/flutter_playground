@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 
 class TabLabel extends StatelessWidget {
-  const TabLabel({super.key, required this.isSelected, required this.text});
+  const TabLabel({required this.isSelected, required this.text, super.key});
 
   final bool isSelected;
   final String text;
@@ -25,4 +24,3 @@ class TabLabel extends StatelessWidget {
     );
   }
 }
-

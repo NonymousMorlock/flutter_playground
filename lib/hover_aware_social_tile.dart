@@ -38,24 +38,26 @@ class _HoverAwareSocialTileState extends State<HoverAwareSocialTile> {
               Column(
                 children: [
                   ValueListenableBuilder(
-                      valueListenable: shimmerPusherNotifier,
+                    valueListenable: shimmerPusherNotifier,
+                    builder: (_, value, __) {
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        height: value,
+                      );
+                    },
+                  ),
+                  Flexible(
+                    child: ValueListenableBuilder(
+                      valueListenable: shimmerHeightNotifier,
                       builder: (_, value, __) {
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
+                          color: Colors.grey.withOpacity(.4),
+                          width: 50,
                           height: value,
                         );
-                      }),
-                  Flexible(
-                    child: ValueListenableBuilder(
-                        valueListenable: shimmerHeightNotifier,
-                        builder: (_, value, __) {
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            color: Colors.grey.withOpacity(.4),
-                            width: 50,
-                            height: value,
-                          );
-                        }),
+                      },
+                    ),
                   ),
                 ],
               ),

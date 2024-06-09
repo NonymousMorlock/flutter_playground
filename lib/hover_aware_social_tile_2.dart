@@ -79,12 +79,13 @@ class _HoverAwareSocialTile2State extends State<HoverAwareSocialTile2>
               Column(
                 children: [
                   ValueListenableBuilder(
-                      valueListenable: shimmerPusherNotifier,
-                      builder: (_, value, __) {
-                        return SizedBox(
-                          height: value,
-                        );
-                      }),
+                    valueListenable: shimmerPusherNotifier,
+                    builder: (_, value, __) {
+                      return SizedBox(
+                        height: value,
+                      );
+                    },
+                  ),
                   Flexible(
                     child: ValueListenableBuilder(
                       valueListenable: shimmerHeightNotifier,

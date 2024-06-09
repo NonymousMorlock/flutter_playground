@@ -3,9 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  screen_retriever
-  window_manager
-  window_size
+  file_selector_linux
+  objectbox_flutter_libs
+  sentry_flutter
+  url_launcher_linux
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

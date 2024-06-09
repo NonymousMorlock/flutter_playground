@@ -43,32 +43,32 @@ class _TabExampleState extends State<TabExample>
             ),
           ),
           child: ListenableBuilder(
-              listenable: tabController,
-              builder: (_, __) {
-                return TabBar(
-                  controller: tabController,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorColor: color,
-                  labelPadding: EdgeInsets.zero,
-                  isScrollable: false,
-                  labelColor: color,
-                  unselectedLabelColor: Colors.grey,
-                  tabs: [
-                    Tab(
-                      child: TabLabel(
-                        isSelected: tabController.index == 0,
-                        text: 'All',
-                      ),
+            listenable: tabController,
+            builder: (_, __) {
+              return TabBar(
+                controller: tabController,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorColor: color,
+                labelPadding: EdgeInsets.zero,
+                labelColor: color,
+                unselectedLabelColor: Colors.grey,
+                tabs: [
+                  Tab(
+                    child: TabLabel(
+                      isSelected: tabController.index == 0,
+                      text: 'All',
                     ),
-                    Tab(
-                      child: TabLabel(
-                        isSelected: tabController.index == 1,
-                        text: 'My Bookings',
-                      ),
+                  ),
+                  Tab(
+                    child: TabLabel(
+                      isSelected: tabController.index == 1,
+                      text: 'My Bookings',
                     ),
-                  ],
-                );
-              }),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
         const SizedBox(height: 30),
         Expanded(
@@ -104,7 +104,7 @@ class _TabExampleState extends State<TabExample>
                             color: color,
                             fontSize: 16,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   );
