@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,95 +36,132 @@ class XylophoneApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              buildKey(color: Colors.red, noteNumber: 1),
-              buildKey(color: Colors.orange, noteNumber: 2),
-              buildKey(color: Colors.yellow, noteNumber: 3),
-              buildKey(color: Colors.green, noteNumber: 4),
-              buildKey(color: Colors.blue, noteNumber: 5),
-              buildKey(color: Colors.indigo, noteNumber: 6),
-              buildKey(color: Colors.purple, noteNumber: 7),
-            ],
+      home: InputPage(),
+    );
+  }
+}
+
+const bottomContainerHeight = 80.0;
+const activeCardColour = Color(0xFF1D1E33);
+const bottomContainerColour = Color(0xFFEB1555);
+const inactiveCardColour = Color(0xFF111328);
+
+enum Gender {
+  male,
+  female,
+}
+
+class InputPage extends StatefulWidget {
+  const InputPage({super.key});
+
+  @override
+  State<InputPage> createState() => _InputPageState();
+}
+
+class _InputPageState extends State<InputPage> {
+  Gender? selectedGender;
+
+  // Color maleCardColour = inactiveCardColour;
+  // Color femaleCardColour = inactiveCardColour;
+
+  //1 = male, 2 = female
+  // void updateColour(Gender selectedGender) {
+  //   //male card pressed
+  //   if (selectedGender == Gender.male) {
+  //     if (maleCardColour == inactiveCardColour) {
+  //       maleCardColour = activeCardColour;
+  //       femaleCardColour = inactiveCardColour;
+  //     } else {
+  //       maleCardColour = inactiveCardColour;
+  //     }
+  //   }
+  //   // female card pressed
+  //   if (selectedGender == Gender.female) {
+  //     if (femaleCardColour == inactiveCardColour) {
+  //       femaleCardColour = activeCardColour;
+  //       maleCardColour = inactiveCardColour;
+  //     } else {
+  //       femaleCardColour = inactiveCardColour;
+  //     }
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text(
+            'BMI CALCULATOR',
+            style: TextStyle(color: Colors.white),
           ),
         ),
-        bottomNavigationBar: IBottomNavBar(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            NavBarNotifier.instance.toggle();
-          },
-          child: Icon(Icons.add),
-        )
+      ),
+      body: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedGender = Gender.male;
+              });
+            },
+            child: ReusableCard(
+              colour: selectedGender == Gender.male
+                  ? activeCardColour
+                  : inactiveCardColour, //maleCardColour,
+              cardChild: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FontAwesomeIcons.mars, color: Colors.white),
+                    Text('MALE', style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedGender = Gender.female;
+              });
+            },
+            child: ReusableCard(
+              colour: selectedGender == Gender.female
+                  ? activeCardColour
+                  : inactiveCardColour,
+              cardChild: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FontAwesomeIcons.venus, color: Colors.white),
+                    Text('FEMALE', style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class NavBarNotifier {
-  NavBarNotifier._internal();
+class ReusableCard extends StatelessWidget {
+  const ReusableCard({required this.colour, super.key, this.cardChild});
 
-  static final NavBarNotifier instance = NavBarNotifier._internal();
-
-  final ValueNotifier<bool> _showNavBar = ValueNotifier<bool>(true);
-
-  ValueNotifier<bool> get showNavBar => _showNavBar;
-
-  void hide() {
-    if (_showNavBar.value) {
-      _showNavBar.value = false;
-    }
-  }
-
-  void show() {
-    if (!_showNavBar.value) {
-      _showNavBar.value = true;
-    }
-  }
-
-  void toggle() {
-    _showNavBar.value = !_showNavBar.value;
-  }
-}
-
-class IBottomNavBar extends StatelessWidget {
-  const IBottomNavBar({super.key});
+  final Color colour;
+  final Widget? cardChild;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: NavBarNotifier.instance.showNavBar,
-      builder: (_, showNav, __) {
-        if (showNav) {
-          return BottomAppBar(
-            color: Colors.black,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () async {
-                  },
-                  icon: Icon(Icons.stop),
-                ),
-                IconButton(
-                  onPressed: () async {
-                  },
-                  icon: Icon(Icons.pause),
-                ),
-                IconButton(
-                  onPressed: () async {
-                  },
-                  icon: Icon(Icons.play_arrow),
-                ),
-              ],
-            ),
-          );
-        }
-        return SizedBox.shrink();
-      },
+    return Card(
+      color: colour,
+      child: cardChild,
     );
   }
 }
