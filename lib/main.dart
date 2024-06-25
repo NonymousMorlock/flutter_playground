@@ -1,167 +1,81 @@
-import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(XylophoneApp());
+  runApp(MyApp());
 }
 
-class XylophoneApp extends StatelessWidget {
-  final AudioPlayer player = AudioPlayer();
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-  Future<void> playSound(int noteNumber) async {
-    await player.stop();
-    print('Playing sound for note $noteNumber');
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-    await player.play(AssetSource('note$noteNumber.wav'));
-  }
+class _MyAppState extends State<MyApp> {
+  final List<Image> images = [];
 
-  Expanded buildKey({Color? color, int? noteNumber}) {
-    return Expanded(
-      child: ElevatedButton(
-        onPressed: () async {
-          print('Button $noteNumber pressed');
+  final key = GlobalKey();
 
-          await playSound(noteNumber!);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-        ),
-        child: Text(''),
-      ),
-    );
+  Future<Uint8List> _capturePng(GlobalKey key) async {
+    RenderRepaintBoundary boundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    final image = await boundary.toImage();
+    final byteData = await image.toByteData(format: ImageByteFormat.png);
+    final pngBytes = byteData!.buffer.asUint8List();
+    return pngBytes;
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: InputPage(),
-    );
-  }
-}
-
-const bottomContainerHeight = 80.0;
-const activeCardColour = Color(0xFF1D1E33);
-const bottomContainerColour = Color(0xFFEB1555);
-const inactiveCardColour = Color(0xFF111328);
-
-enum Gender {
-  male,
-  female,
-}
-
-class InputPage extends StatefulWidget {
-  const InputPage({super.key});
-
-  @override
-  State<InputPage> createState() => _InputPageState();
-}
-
-class _InputPageState extends State<InputPage> {
-  Gender? selectedGender;
-
-  // Color maleCardColour = inactiveCardColour;
-  // Color femaleCardColour = inactiveCardColour;
-
-  //1 = male, 2 = female
-  // void updateColour(Gender selectedGender) {
-  //   //male card pressed
-  //   if (selectedGender == Gender.male) {
-  //     if (maleCardColour == inactiveCardColour) {
-  //       maleCardColour = activeCardColour;
-  //       femaleCardColour = inactiveCardColour;
-  //     } else {
-  //       maleCardColour = inactiveCardColour;
-  //     }
-  //   }
-  //   // female card pressed
-  //   if (selectedGender == Gender.female) {
-  //     if (femaleCardColour == inactiveCardColour) {
-  //       femaleCardColour = activeCardColour;
-  //       maleCardColour = inactiveCardColour;
-  //     } else {
-  //       femaleCardColour = inactiveCardColour;
-  //     }
-  //   }
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'BMI CALCULATOR',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
-      body: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedGender = Gender.male;
-              });
-            },
-            child: ReusableCard(
-              colour: selectedGender == Gender.male
-                  ? activeCardColour
-                  : inactiveCardColour, //maleCardColour,
-              cardChild: Container(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(FontAwesomeIcons.mars, color: Colors.white),
-                    Text('MALE', style: TextStyle(color: Colors.white)),
-                  ],
+      home: LayoutBuilder(builder: (context, constraints) {
+        return Scaffold(
+          backgroundColor: Colors.grey,
+          body: RepaintBoundary(
+            key: key,
+            child: SafeArea(
+              child: Center(
+                child: ListView.separated(
+                  itemCount: images.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 20),
+                  itemBuilder: (context, index) {
+                    return Center(
+                      child: Container(
+                        height: 200,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                        ),
+                        child: images[index],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              final directory = await getApplicationDocumentsDirectory();
+              final path = directory.path;
+              final image = await _capturePng(key);
+              final imageName = 'image${images.length}';
+              final file = File('$path/$imageName.png');
+              await file.writeAsBytes(image);
               setState(() {
-                selectedGender = Gender.female;
+                images.add(Image.file(file));
               });
             },
-            child: ReusableCard(
-              colour: selectedGender == Gender.female
-                  ? activeCardColour
-                  : inactiveCardColour,
-              cardChild: Container(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(FontAwesomeIcons.venus, color: Colors.white),
-                    Text('FEMALE', style: TextStyle(color: Colors.white)),
-                  ],
-                ),
-              ),
-            ),
+            child: Icon(Icons.camera),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ReusableCard extends StatelessWidget {
-  const ReusableCard({required this.colour, super.key, this.cardChild});
-
-  final Color colour;
-  final Widget? cardChild;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: colour,
-      child: cardChild,
+        );
+      }),
     );
   }
 }
