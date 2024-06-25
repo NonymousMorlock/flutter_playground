@@ -10,9 +10,14 @@ environment:
 
 dependencies:
   audioplayers: ^6.0.0
+  ffi: ^2.1.2
   flutter:
     sdk: flutter
   font_awesome_flutter: ^10.7.0
+  logging: ^1.2.0
+  permission_handler: ^11.3.1
+  star_menu: ^4.0.1
+  system_info: ^1.0.1
 
 dev_dependencies:
   flutter_test:
