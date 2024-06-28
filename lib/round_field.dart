@@ -39,7 +39,7 @@ class _TabExampleState extends State<TabExample>
           data: currentTheme.copyWith(
             // As suggested by https://stackoverflow.com/a/75573719/17971158
             colorScheme: currentTheme.colorScheme.copyWith(
-              surfaceVariant: color,
+              surfaceContainerHighest: color,
             ),
           ),
           child: ListenableBuilder(

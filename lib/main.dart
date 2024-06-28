@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final List<Image> images = [];
+  Image? image;
 
   final key = GlobalKey();
 
@@ -41,35 +39,26 @@ class _MyAppState extends State<MyApp> {
             key: key,
             child: SafeArea(
               child: Center(
-                child: ListView.separated(
-                  itemCount: images.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 20),
-                  itemBuilder: (context, index) {
-                    return Center(
-                      child: Container(
-                        height: 200,
-                        width: 200,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: images[index],
-                      ),
-                    );
-                  },
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    image: DecorationImage(
+                      image: (image?.image ??
+                          NetworkImage('https://picsum.photos/200/200')),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              final directory = await getApplicationDocumentsDirectory();
-              final path = directory.path;
-              final image = await _capturePng(key);
-              final imageName = 'image${images.length}';
-              final file = File('$path/$imageName.png');
-              await file.writeAsBytes(image);
+              final imageBytes = await _capturePng(key);
               setState(() {
-                images.add(Image.file(file));
+                image = Image.memory(imageBytes);
               });
             },
             child: Icon(Icons.camera),

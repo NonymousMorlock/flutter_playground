@@ -19,6 +19,8 @@ dependencies:
   star_menu: ^4.0.1
   system_info: ^1.0.1
 
+  path_provider: any
+  http: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
