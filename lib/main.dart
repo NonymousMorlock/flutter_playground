@@ -1,70 +1,105 @@
-import 'dart:ui';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:go_router/go_router.dart';
+
+final router = GoRouter(
+  redirect: (_, state) {
+    // Idk how you check but you can do it here, for me I'll just pass a
+    // redirect extra
+    final needsLocalAuth = state.extra == 'locked';
+    if (needsLocalAuth) {
+      return Uri(
+        path: '/lock-screen',
+        queryParameters: {'redirect': state.fullPath},
+      ).toString();
+      // OR
+      // return '/lock-screen?redirect=${state.fullPath}';
+    }
+    return null;
+  },
+  routes: [
+    GoRoute(
+      path: '/lock-screen',
+      builder: (_, state) =>
+          LockScreen(redirect: state.uri.queryParameters['redirect'] as String),
+    ),
+    GoRoute(
+      path: '/',
+      builder: (_, state) => const Home(),
+    ),
+    GoRoute(
+      path: Screen2.path,
+      builder: (_, state) => const Screen2(),
+    ),
+    ShellRoute(
+      builder: (_, state, child) => SizedBox.shrink(),
+      routes: [],
+    ),
+  ],
+);
 
 void main() {
-  runApp(MyApp());
+  runApp(App());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  Image? image;
-
-  final key = GlobalKey();
-
-  Future<Uint8List> _capturePng(GlobalKey key) async {
-    RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    final image = await boundary.toImage();
-    final byteData = await image.toByteData(format: ImageByteFormat.png);
-    final pngBytes = byteData!.buffer.asUint8List();
-    return pngBytes;
-  }
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LayoutBuilder(builder: (context, constraints) {
-        return Scaffold(
-          backgroundColor: Colors.grey,
-          body: RepaintBoundary(
-            key: key,
-            child: SafeArea(
-              child: Center(
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    image: DecorationImage(
-                      image: (image?.image ??
-                          NetworkImage('https://picsum.photos/200/200')),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+    return MaterialApp.router(routerConfig: router);
+  }
+}
+
+class LockScreen extends StatelessWidget {
+  const LockScreen({required this.redirect, super.key});
+
+  final String redirect;
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint(redirect);
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () => context.go(redirect),
+            child: Text('Auth Done User Verified'),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final imageBytes = await _capturePng(key);
-              setState(() {
-                image = Image.memory(imageBytes);
-              });
-            },
-            child: Icon(Icons.camera),
-          ),
-        );
-      }),
+        ),
+      ),
     );
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+
+  static const path = '/';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              context.go(Screen2.path, extra: 'locked');
+            },
+            child: Text('Go to screen2'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Screen2 extends StatelessWidget {
+  const Screen2({super.key});
+
+  static const path = '/screen-2';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: Text('Screen 2')));
   }
 }
