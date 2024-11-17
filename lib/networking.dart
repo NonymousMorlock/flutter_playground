@@ -1,44 +1,61 @@
-import 'dart:convert';
+import 'package:discord_test/payment_viewmodel.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:http/http.dart' as http;
-
-class Networking {
-  // POST GET PUT DELETE
-  // POST: https://myapi.com/products
-  // Create Read Update Delete
-  // CRUD
-
-  Future<List<Product>> getProducts() async {
-    try {
-      final uri = Uri.parse('https://myapi.com/products/239238');
-
-      final response = await http.post(
-        uri,
-        body: jsonEncode({'name': 'Gel2'}),
-        headers: {'Authorization': 'Bearer asd9f0asjdf09wjef0w9ejfw09f'},
-      );
-      if (response.statusCode != 200) {
-        throw Exception('something went wrong');
-      }
-      final productsData = jsonDecode(response.body) as List;
-
-      final products = productsData.map((productData) {
-        return Product(
-          name: productData['name'] as String,
-          price: productData['price'] as double,
-        );
-      }).toList();
-
-      return products;
-    } catch (e) {
-      rethrow;
-    }
-  }
+class PaymentPage extends StatefulWidget {
+  @override
+  State<PaymentPage> createState() => _PaymentPageState();
 }
 
-class Product {
-  const Product({required this.name, required this.price});
+class _PaymentPageState extends State<PaymentPage> {
 
-  final String name;
-  final double price;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PaymentViewmodel>().listenToPayments();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Listen to Payments'),
+      ),
+      body: Center(
+        child: Consumer<PaymentViewmodel>(
+          builder: (context, viewmodel, child) {
+            final state = viewmodel.state;
+
+            if (state is PaymentLoading) {
+              return const CircularProgressIndicator();
+            } else if (state is PaymentReceived) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.check, color: Colors.green, size: 24),
+                  const SizedBox(width: 8),
+                  Text('Payment received'),
+                ],
+              );
+            } else if (state is PaymentError) {
+              return Text('Error: ${state.message}');
+            } else if (state is PaymentStopped) {
+              return const Text('Stopped listening to payments.');
+            } else {
+              return const Text('No payment events yet.');
+            }
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Trigger listening to payments
+          context.read<PaymentViewmodel>().listenToPayments();
+        },
+        child: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
 }
